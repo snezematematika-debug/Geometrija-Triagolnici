@@ -301,7 +301,7 @@ const TRIANGLE_ASSETS: Record<string, { path: string, viewBox: string, decor?: R
          <text x="25" y="45" textAnchor="middle" className="text-[10px] font-extrabold fill-blue-800">b</text>
          <text x="50" y="90" textAnchor="middle" className="text-[10px] font-extrabold fill-red-700">c</text>
          {/* Visual equation */}
-         <text x="50" y="10" textAnchor="middle" className="text-[12px] font-extrabold fill-slate-900">a + b > c</text>
+         <text x="50" y="10" textAnchor="middle" className="text-[12px] font-extrabold fill-slate-900">a + b &gt; c</text>
       </g>
     )
   },
