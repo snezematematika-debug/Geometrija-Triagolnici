@@ -87,7 +87,7 @@ const TriangleVisualizer: React.FC<Props> = ({ moduleId }) => {
     setDrawSelection(null);
   }, [moduleId]);
 
-  // Calculations omitted for brevity, logic identical to previous version, just ensuring styles update
+  // Calculations
   const sideA = dist(points.B, points.C); 
   const sideB = dist(points.A, points.C); 
   const sideC = dist(points.A, points.B); 
@@ -441,6 +441,16 @@ const TriangleVisualizer: React.FC<Props> = ({ moduleId }) => {
   };
   const hasDrawingFeatures = moduleId === ModuleId.CENTROID || moduleId === ModuleId.ORTHOCENTER || moduleId === ModuleId.CIRCUMCIRCLE || moduleId === ModuleId.INCIRCLE;
 
+  // Prepare Relation Data safely outside JSX
+  const relationData = [
+      { label: 'a (BC)', angleName: 'α', valSide: sideA, valAngle: angleA, color: getColor(0), idx: 0 },
+      { label: 'b (AC)', angleName: 'β', valSide: sideB, valAngle: angleB, color: getColor(1), idx: 1 },
+      { label: 'c (AB)', angleName: 'γ', valSide: sideC, valAngle: angleC, color: getColor(2), idx: 2 }
+  ].sort((a, b) => b.valSide - a.valSide);
+  
+  const relMax = relationData[0];
+  const relMin = relationData[2];
+
   const renderToolbar = () => {
       if (moduleId === ModuleId.EXISTENCE) {
           return (
@@ -581,7 +591,7 @@ const TriangleVisualizer: React.FC<Props> = ({ moduleId }) => {
                  </g>
             )}
 
-            {/* Visuals omitted for brevity, logic identical to previous, just wrapped in <> */}
+            {/* Side Angle Relation Visuals */}
             {moduleId === ModuleId.SIDE_ANGLE_RELATION && (
                 <g className="pointer-events-none">
                     <path d={`M ${points.A.x} ${points.A.y} L ${points.B.x} ${points.B.y} L ${points.C.x} ${points.C.y} Z`} fill="rgba(241, 245, 249, 0.5)" stroke="none" />
@@ -927,63 +937,48 @@ const TriangleVisualizer: React.FC<Props> = ({ moduleId }) => {
                 <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1 border-b border-slate-700 pb-2">
                     Врска: Страни vs Агли
                 </div>
-                {(() => {
-                    // Prepare data sorted by size for display
-                    const data = [
-                        { label: 'a (BC)', angleName: 'α', valSide: sideA, valAngle: angleA, color: getColor(0), idx: 0 },
-                        { label: 'b (AC)', angleName: 'β', valSide: sideB, valAngle: angleB, color: getColor(1), idx: 1 },
-                        { label: 'c (AB)', angleName: 'γ', valSide: sideC, valAngle: angleC, color: getColor(2), idx: 2 }
-                    ].sort((a, b) => b.valSide - a.valSide);
+                
+                {/* Largest Row */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-red-900/40 to-slate-800 border border-red-500/30">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-red-400 uppercase">Најдолга страна</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-xl font-black text-white">{relMax.label}</span>
+                            <span className="text-sm font-mono text-slate-400 opacity-80">{displayLen(relMax.valSide)}</span>
+                        </div>
+                    </div>
+                    <div className="text-red-500 animate-pulse">
+                        <ArrowRight size={24} strokeWidth={3} />
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-bold text-red-400 uppercase">Најголем агол</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-sm font-mono text-slate-400 opacity-80">{Math.round(relMax.valAngle)}°</span>
+                            <span className="text-xl font-black text-white">{relMax.angleName}</span>
+                        </div>
+                    </div>
+                </div>
 
-                    const max = data[0];
-                    const min = data[2];
-
-                    return (
-                        <>
-                            {/* Largest Row */}
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-red-900/40 to-slate-800 border border-red-500/30">
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-red-400 uppercase">Најдолга страна</span>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-xl font-black text-white">{max.label}</span>
-                                        <span className="text-sm font-mono text-slate-400 opacity-80">{displayLen(max.valSide)}</span>
-                                    </div>
-                                </div>
-                                <div className="text-red-500 animate-pulse">
-                                    <ArrowRight size={24} strokeWidth={3} />
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-[10px] font-bold text-red-400 uppercase">Најголем агол</span>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-sm font-mono text-slate-400 opacity-80">{Math.round(max.valAngle)}°</span>
-                                        <span className="text-xl font-black text-white">{max.angleName}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Smallest Row */}
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-900/40 to-slate-800 border border-blue-500/30">
-                                <div className="flex flex-col">
-                                    <span className="text-[10px] font-bold text-blue-400 uppercase">Најкратка страна</span>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-xl font-black text-white">{min.label}</span>
-                                        <span className="text-sm font-mono text-slate-400 opacity-80">{displayLen(min.valSide)}</span>
-                                    </div>
-                                </div>
-                                <div className="text-blue-500 animate-pulse">
-                                    <ArrowRight size={24} strokeWidth={3} />
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-[10px] font-bold text-blue-400 uppercase">Најмал агол</span>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-sm font-mono text-slate-400 opacity-80">{Math.round(min.valAngle)}°</span>
-                                        <span className="text-xl font-black text-white">{min.angleName}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                    );
-                })()}
+                {/* Smallest Row */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-900/40 to-slate-800 border border-blue-500/30">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-blue-400 uppercase">Најкратка страна</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-xl font-black text-white">{relMin.label}</span>
+                            <span className="text-sm font-mono text-slate-400 opacity-80">{displayLen(relMin.valSide)}</span>
+                        </div>
+                    </div>
+                    <div className="text-blue-500 animate-pulse">
+                        <ArrowRight size={24} strokeWidth={3} />
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-[10px] font-bold text-blue-400 uppercase">Најмал агол</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-sm font-mono text-slate-400 opacity-80">{Math.round(relMin.valAngle)}°</span>
+                            <span className="text-xl font-black text-white">{relMin.angleName}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         )}
         

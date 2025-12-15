@@ -6,7 +6,6 @@ import TriangleVisualizer from './components/TriangleVisualizer';
 import LessonView from './components/LessonView';
 import QuizView from './components/QuizView';
 import AITutor from './components/AITutor';
-import InternalAnglesAnimation from './components/InternalAnglesAnimation';
 import { BookOpen, Compass, CheckSquare, ChevronLeft, GraduationCap, PlayCircle, Star } from 'lucide-react';
 
 const App: React.FC = () => {
