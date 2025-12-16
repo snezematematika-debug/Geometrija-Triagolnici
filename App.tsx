@@ -156,7 +156,7 @@ const App: React.FC = () => {
         </main>
         
         <footer className="text-center py-12 mt-12 bg-white border-t border-slate-100">
-            <p className="text-slate-400 font-medium">Триаголници © 2024</p>
+            <p className="text-slate-400 font-medium">Проф. Снежана Златковска © 2025</p>
         </footer>
         <AITutor context="Корисникот се наоѓа на почетниот екран (мени)." />
       </div>
